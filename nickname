@@ -1,0 +1,66 @@
+#!/bin/bash
+export red="\033[1;31m"
+export green="\033[1;32m"
+export yellow="\033[1;33m"
+export cyan="\033[1;36m"
+export blue="\033[1;34m"
+export reset="\033[m"
+
+function  create {
+read -p "$(echo -e "Enter ${blue}Alias${reset}: ")" alias
+read -p "$(echo -e "Enter ${yellow}Command${reset}: ")" command
+echo -e "${cyan}alias${reset} ${blue}$alias${reset}='${yellow}$command${reset}'"
+read -p "$(echo -e "Save to ${reset}${green}.bashrc-aliases?${reset}: Press Enter to Confirm ")" confirm 
+if [ "$confirm" != "" ];
+then
+	echo "Exiting without saving" && exit;
+else
+	echo "alias $alias='$command'" >> ~/.bashrc-aliases && echo -e "${green}Saved!${reset}"
+	sleep 1
+	echo -e "${yellow}Reloading Bash${reset}"
+	sleep 1
+	trap "bash" EXIT;
+fi
+}
+
+function details {
+echo -e "${yellow}ID#	line#	Alias${reset}"
+cat -n ~/.bashrc-aliases 
+nickname
+}
+
+
+function rmalias {
+cat -b ~/.bashrc-aliases
+read -p "$(echo -e "${yellow}Enter # to Delete${reset}: ")" number 
+read -p "$(echo -e "${red}Press Enter to Delete${reset}: $(cat -b ~/.bashrc-aliases | grep -w $number -m 1 | awk -F"$number" '{print $2}')")" rmconfirm
+if [ "$rmconfirm" != "" ];
+then
+	exit;
+else
+	sed -i "$number"d ~/.bashrc-aliases
+	echo -e "${green}Alias Removed!!${reset}"
+	sleep 1
+	echo -e "${yellow}Resetting Bash..${reset}"
+	sleep 1
+	trap "bash" EXIT;
+fi
+}
+
+echo -e "${blue}#######${reset}${yellow} Bash Alias Helper ${cyan}~/.bashrc-aliases${reset} ${blue}#######${reset}"
+echo -e "${cyan}1: ${green}Create	${cyan}2: ${blue}List		${cyan}3: ${red}Delete	${cyan}4: ${yellow}Exit${reset}"
+read -n 1 -s operate
+case "$operate" in
+	"1")
+		create
+		;;
+	"2")
+		details
+		;;
+	"3")
+		rmalias
+		;;
+	"4")
+		exit
+		;;
+esac
