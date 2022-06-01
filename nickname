@@ -24,7 +24,7 @@ fi
 }
 
 function details {
-echo -e "${yellow}ID#	line#	Alias${reset}"
+echo -e "${yellow}ID#	Alias${reset}"
 cat -n ~/.bashrc-aliases 
 nickname
 }
